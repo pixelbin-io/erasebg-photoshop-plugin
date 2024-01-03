@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { RefreshIcon } from "./Icons";
 import { WC } from "./WC";
 import { removeBackground } from "../utils";
+import { CommandController } from "../controllers/CommandController";
+import { ErrorAlertDialog } from "./ErrorAlertDialog";
 
 export const RemoveBackground = ({
     appOrgDetails,
@@ -20,23 +22,6 @@ export const RemoveBackground = ({
     const [refine, setRefine] = useState(initialRefine);
     const [applyButtonDisabled, setApplyButtonDisabled] = useState(false);
 
-    // useEffect(() => {
-    //     axios.get(
-    //         "https://api.pixelbin.io/service/platform/assets/v1.0/playground/plugins",
-    //         {
-    //             headers: {
-    //                 "X-Ebg-Param": "MjAyMzEyMjNUMTA1ODU4Wg==",
-    //                 "X-Ebg-Signature":
-    //                     "v1:38efdf0ed5142d4bdf5e56d4a32565efe1cea5cd309d0963b4ff31dfd05091a5",
-    //                 Authorization:
-    //                     "Bearer YTExYTE0ZTUtMjY3MS00MmQzLWJjNDItYmQwZWZhY2NiZDUy",
-    //             }
-    //         }
-    //     ).then((res) => {
-    //         console.log(res);
-    //     });
-    // }, []);
-
     const handleApply = async (e) => {
         e.preventDefault();
 
@@ -48,7 +33,17 @@ export const RemoveBackground = ({
             refine,
         };
 
-        await removeBackground({ appOrgDetails, filters, token });
+        try {
+            await removeBackground({ appOrgDetails, filters, token });
+        } catch (error) {
+            const errorAlertDialogController = new CommandController(
+                ({ dialog }) => (
+                    <ErrorAlertDialog dialog={dialog} error={error} />
+                )
+            );
+
+            await errorAlertDialogController.run();
+        }
 
         setFilters(filters);
         setApplyButtonDisabled(false);

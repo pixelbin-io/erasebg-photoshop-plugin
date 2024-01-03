@@ -14,16 +14,20 @@ export class CommandController {
 
         this[_Component] = Component;
         this[_id] = id;
-        this[_dialogOpts] = Object.assign({}, {
-            title: id,
-            resize: "none",
-            size: {
-                width: 480,
-                height: 320
-            }
-        }, dialogOpts);
+        this[_dialogOpts] = Object.assign(
+            {},
+            {
+                title: id,
+                resize: "none",
+                size: {
+                    width: 480,
+                    height: 320,
+                },
+            },
+            dialogOpts
+        );
 
-        ["run"].forEach(fn => this[fn] = this[fn].bind(this));
+        ["run"].forEach((fn) => (this[fn] = this[fn].bind(this)));
     }
 
     async run() {
@@ -32,7 +36,7 @@ export class CommandController {
 
             const root = createRoot(this[_root]);
 
-            root.render(this[_Component]({ dialog: this[_root] }))
+            root.render(this[_Component]({ dialog: this[_root] }));
         }
 
         document.body.appendChild(this[_root]);
