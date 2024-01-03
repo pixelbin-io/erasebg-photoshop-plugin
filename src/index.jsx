@@ -3,10 +3,10 @@ import { entrypoints, shell } from "uxp";
 
 import "./styles.css";
 import { PanelController } from "./controllers/PanelController.jsx";
-import { RemoveBackground } from "./panels/RemoveBackground.jsx";
+import { App } from "./panels/App.jsx";
 
-const removeBackgroundPanelController = new PanelController(() => <RemoveBackground />, {
-    id: "removeBackground",
+const appPanelController = new PanelController(() => <App />, {
+    id: "app",
     menuItems: [
         {
             id: "logout",
@@ -43,6 +43,6 @@ entrypoints.setup({
         },
     },
     panels: {
-        removeBackground: removeBackgroundPanelController,
+        app: appPanelController,
     },
 });

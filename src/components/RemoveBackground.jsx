@@ -1,53 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { transformations } from "@pixelbin/core";
-import { RefreshIcon } from "../components/Icons";
-import { WC } from "../components/WC";
-import SetAPIKeyDialog from "../components/SetAPIKeyDialog";
+import { RefreshIcon } from "./Icons";
+import { WC } from "./WC";
 import { removeBackground } from "../utils";
-import { CommandController } from "../controllers/CommandController";
 
-function Backdrop() {
-    if (localStorage.getItem("apikey")) return null;
+// function Backdrop() {
+//     if (localStorage.getItem("apikey")) return null;
 
-    const handleSetAPIKeyClick = async () => {
-        const setApiKeyController = new CommandController(
-            ({ dialog }) => <SetAPIKeyDialog dialog={dialog} />,
-            {
-                id: "setAPIKey",
-                title: "Set API Key",
-                size: { width: 480, height: 480 },
-            }
-        );
+//     const handleSetAPIKeyClick = async () => {
+//         const setApiKeyController = new CommandController(
+//             ({ dialog }) => <Login dialog={dialog} />,
+//             {
+//                 id: "setAPIKey",
+//                 title: "Set API Key",
+//                 size: { width: 480, height: 480 },
+//             }
+//         );
 
-        const closeReason = await setApiKeyController.run();
+//         const closeReason = await setApiKeyController.run();
 
-        if (closeReason === "tokenValidated") {
-            location.reload();
-        }
-    }
+//         if (closeReason === "tokenValidated") {
+//             location.reload();
+//         }
+//     }
 
-    return (
-        <div style={{ background: "rgb(0 0 0 / 90%)", width: "100%", height: "100%", position: "absolute", top: 0, left: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <sp-button onClick={handleSetAPIKeyClick}>Set API Key</sp-button>
-        </div>
-    );
-}
+//     return (
+//         <div style={{ background: "rgb(0 0 0 / 90%)", width: "100%", height: "100%", position: "absolute", top: 0, left: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+//             <sp-button onClick={handleSetAPIKeyClick}>Set API Key</sp-button>
+//         </div>
+//     );
+// }
 
-export const RemoveBackground = () => {
+const RemoveBackground = ({
+    appOrgDetails,
+    token,
+    filters = {},
+    setFilters,
+}) => {
     const options = ["general", "ecommerce", "car (preview)", "human"];
-    let initialIndustryType = "general";
-    let initialAddShadow = false;
-    let initialRefine = true;
 
-    const filters = localStorage.getItem("filters");
-
-    if (filters) {
-        const { industryType, addShadow, refine } = JSON.parse(filters);
-
-        initialIndustryType = industryType;
-        initialAddShadow = addShadow;
-        initialRefine = refine;
-    }
+    let initialIndustryType = filters.industryType || "general";
+    let initialAddShadow = filters.addShadow || false;
+    let initialRefine = filters.refine || true;
 
     const [industryType, setIndustryType] = useState(initialIndustryType);
     const [addShadow, setAddShadow] = useState(initialAddShadow);
@@ -79,25 +72,21 @@ export const RemoveBackground = () => {
         const filters = {
             industryType,
             addShadow,
-            refine
+            refine,
         };
 
-        const transformation = transformations.EraseBG.bg(filters);
+        await removeBackground({ appOrgDetails, filters, token });
 
-        const apiSecret = localStorage.getItem("apikey");
-
-        await removeBackground(transformation, apiSecret);
-
-        localStorage.setItem("filters", JSON.stringify(filters));
-
+        setFilters(filters);
         setApplyButtonDisabled(false);
     };
 
-    const handleIndustryTypeChange = e => setIndustryType(e.target.value);
-    const handleAddShadowChange = e => setAddShadow(e.target.checked);
-    const handleRefineOutputChange = e => setRefine(e.target.checked);
+    const handleIndustryTypeChange = (e) => setIndustryType(e.target.value);
+    const handleAddShadowChange = (e) => setAddShadow(e.target.checked);
+    const handleRefineOutputChange = (e) => setRefine(e.target.checked);
 
-    const handleIndustryTypeResetClick = () => setIndustryType(initialIndustryType);
+    const handleIndustryTypeResetClick = () =>
+        setIndustryType(initialIndustryType);
     const handleAddShadowResetClick = () => setAddShadow(initialAddShadow);
     const handleRefineResetClick = () => setRefine(initialRefine);
 
@@ -108,8 +97,15 @@ export const RemoveBackground = () => {
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative", padding: "1rem" }}>
-            <Backdrop />
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                position: "relative",
+                padding: "1rem",
+            }}
+        >
             <main>
                 <WC onChange={handleIndustryTypeChange}>
                     <div
@@ -124,7 +120,11 @@ export const RemoveBackground = () => {
                         <sp-label for="industry-type" size="m">
                             Industry type
                         </sp-label>
-                        <sp-action-button variant="secondary" quiet onClick={handleIndustryTypeResetClick}>
+                        <sp-action-button
+                            variant="secondary"
+                            quiet
+                            onClick={handleIndustryTypeResetClick}
+                        >
                             <span>Reset</span>
                         </sp-action-button>
                     </div>
@@ -139,7 +139,11 @@ export const RemoveBackground = () => {
                                 <sp-menu-item
                                     key={option}
                                     value={option}
-                                    selected={option === industryType ? true : undefined}
+                                    selected={
+                                        option === industryType
+                                            ? true
+                                            : undefined
+                                    }
                                 >
                                     {option}
                                 </sp-menu-item>
@@ -160,7 +164,11 @@ export const RemoveBackground = () => {
                         <sp-checkbox checked={addShadow ? true : undefined}>
                             Add Shadow (Cars Only)
                         </sp-checkbox>
-                        <sp-action-button variant="secondary" quiet onClick={handleAddShadowResetClick}>
+                        <sp-action-button
+                            variant="secondary"
+                            quiet
+                            onClick={handleAddShadowResetClick}
+                        >
                             <span>Reset</span>
                         </sp-action-button>
                     </div>
@@ -178,7 +186,11 @@ export const RemoveBackground = () => {
                         <sp-checkbox checked={refine ? true : undefined}>
                             Refine Output
                         </sp-checkbox>
-                        <sp-action-button variant="secondary" quiet onClick={handleRefineResetClick}>
+                        <sp-action-button
+                            variant="secondary"
+                            quiet
+                            onClick={handleRefineResetClick}
+                        >
                             <span>Reset</span>
                         </sp-action-button>
                     </div>
@@ -191,7 +203,7 @@ export const RemoveBackground = () => {
                     alignItems: "center",
                     gap: "1rem",
                     width: "100%",
-                    marginTop: "auto"
+                    marginTop: "auto",
                 }}
             >
                 <sp-action-button
@@ -204,10 +216,15 @@ export const RemoveBackground = () => {
                     </div>
                     <span>Reset all</span>
                 </sp-action-button>
-                <sp-button onClick={handleApply} disabled={applyButtonDisabled ? true : undefined}>
+                <sp-button
+                    onClick={handleApply}
+                    disabled={applyButtonDisabled ? true : undefined}
+                >
                     Apply
                 </sp-button>
             </footer>
         </div>
     );
 };
+
+export default RemoveBackground;

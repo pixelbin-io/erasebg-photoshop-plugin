@@ -1,9 +1,8 @@
-import Pixelbin from "@pixelbin/core";
+import Pixelbin, { transformations } from "@pixelbin/core";
+import { PixelbinClient, PixelbinConfig } from "@pixelbin/admin";
 import axios from "axios";
-// import uniqueId from "lodash-es/uniqueId";
 import photoshop from "photoshop";
 import uxp from "uxp";
-import { PixelbinClient, PixelbinConfig } from "@pixelbin/admin";
 
 // async function getSmartObjectInfo(layerId, docId) {
 //     const [res] = await require("photoshop").action.batchPlay(
@@ -95,11 +94,11 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer;
 }
 
-export const removeBackground = async (transformation, apiSecret) => {
+export const removeBackground = async ({ appOrgDetails, filters, token }) => {
     try {
         const config = new PixelbinConfig({
             domain: "https://api.pixelbin.io",
-            apiSecret,
+            apiSecret: token,
         });
 
         const pixelbin = new PixelbinClient(config);
@@ -151,9 +150,9 @@ export const removeBackground = async (transformation, apiSecret) => {
 
             // const data = await pixelbin.assets.getFileByFileId({ fileId });
 
-            const appData = await pixelbin.organization.getAppOrgDetails();
-            const pixelbinCore = new Pixelbin({ cloudName: appData.org.cloudName });
+            const pixelbinCore = new Pixelbin({ cloudName: appOrgDetails.org.cloudName });
             const pixelbinImage = pixelbinCore.image(fileId);
+            const transformation = transformations.EraseBG.bg(filters);
             pixelbinImage.setTransformation(transformation);
 
             const transformationURL = pixelbinImage.getUrl();

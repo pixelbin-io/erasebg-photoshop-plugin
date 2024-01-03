@@ -51,7 +51,7 @@
         },
         {
             "type": "panel",
-            "id": "removeBackground",
+            "id": "app",
             "label": { "default": "Remove background (Erase.bg)" },
             "minimumSize": { "width": 260, "height": 500 },
             "maximumSize": { "width": 260, "height": 500 },
