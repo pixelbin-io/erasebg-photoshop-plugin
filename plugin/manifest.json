@@ -1,0 +1,103 @@
+{
+    "id": "erasebg",
+    "name": "EraseBG",
+    "version": "1.0.0",
+    "main": "index.html",
+    "manifestVersion": 5,
+    "host": [
+        {
+            "app": "PS",
+            "minVersion": "25.1.0"
+        }
+    ],
+    "requiredPermissions": {
+        "allowCodeGenerationFromStrings": true,
+        "launchProcess": {
+            "schemes": ["http", "https"],
+            "extensions": [".svg", ".png"]
+        },
+        "webview": {
+            "allow": "yes",
+            "domains": ["https://*.adobe.com", "https://*.google.com"]
+        },
+        "network": {
+            "domains": [
+                "https://api.pixelbin.io",
+                "https://cdn.pixelbin.io",
+                "https://api.pixelbinz0.de",
+                "http://localhost:9002"
+            ]
+        },
+        "ipc": {
+            "enablePluginCommunication": true
+        }
+    },
+    "entrypoints": [
+        {
+            "type": "command",
+            "id": "goToDashboard",
+            "label": {
+                "default": "Go to dashboard"
+            }
+        },
+        {
+            "type": "panel",
+            "id": "removeBackground",
+            "label": {
+                "default": "Remove background (Erase.bg)"
+            },
+            "minimumSize": {
+                "width": 260,
+                "height": 500
+            },
+            "maximumSize": {
+                "width": 260,
+                "height": 500
+            },
+            "preferredDockedSize": {
+                "width": 260,
+                "height": 500
+            },
+            "preferredFloatingSize": {
+                "width": 260,
+                "height": 500
+            },
+            "icons": [
+                {
+                    "width": 32,
+                    "height": 32,
+                    "path": "icons/icon_D.png",
+                    "scale": [1, 2],
+                    "theme": ["dark", "darkest"],
+                    "species": ["generic"]
+                },
+                {
+                    "width": 32,
+                    "height": 32,
+                    "path": "icons/icon_N.png",
+                    "scale": [1, 2],
+                    "theme": ["lightest", "light"],
+                    "species": ["generic"]
+                }
+            ]
+        }
+    ],
+    "icons": [
+        {
+            "width": 32,
+            "height": 32,
+            "path": "icons/icon_D.png",
+            "scale": [1, 2],
+            "theme": ["dark", "darkest"],
+            "species": ["generic"]
+        },
+        {
+            "width": 32,
+            "height": 32,
+            "path": "icons/icon_N.png",
+            "scale": [1, 2],
+            "theme": ["lightest", "light"],
+            "species": ["generic"]
+        }
+    ]
+}
