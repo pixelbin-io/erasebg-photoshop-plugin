@@ -1,36 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { RefreshIcon } from "./Icons";
 import { WC } from "./WC";
 import { removeBackground } from "../utils";
 
-// function Backdrop() {
-//     if (localStorage.getItem("apikey")) return null;
-
-//     const handleSetAPIKeyClick = async () => {
-//         const setApiKeyController = new CommandController(
-//             ({ dialog }) => <Login dialog={dialog} />,
-//             {
-//                 id: "setAPIKey",
-//                 title: "Set API Key",
-//                 size: { width: 480, height: 480 },
-//             }
-//         );
-
-//         const closeReason = await setApiKeyController.run();
-
-//         if (closeReason === "tokenValidated") {
-//             location.reload();
-//         }
-//     }
-
-//     return (
-//         <div style={{ background: "rgb(0 0 0 / 90%)", width: "100%", height: "100%", position: "absolute", top: 0, left: 0, zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-//             <sp-button onClick={handleSetAPIKeyClick}>Set API Key</sp-button>
-//         </div>
-//     );
-// }
-
-const RemoveBackground = ({
+export const RemoveBackground = ({
     appOrgDetails,
     token,
     filters = {},
@@ -226,5 +199,3 @@ const RemoveBackground = ({
         </div>
     );
 };
-
-export default RemoveBackground;

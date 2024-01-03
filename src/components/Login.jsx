@@ -3,15 +3,15 @@ import { PixelbinClient, PixelbinConfig } from "@pixelbin/admin";
 
 import { handle } from "../utils";
 
-export default function Login({ setToken, setAppOrgDetails }) {
+export function Login({ setToken, setAppOrgDetails }) {
     const [errorMessage, setErrorMessage] = useState("");
-    const [validateButtonDisabled, setValidateButtonDisabled] = useState(false);
+    const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
     const tokenInputRef = useRef();
 
-    const handleFormSubmit = async (e) => {
+    const handleSubmitClick = async (e) => {
         e.preventDefault();
 
-        setValidateButtonDisabled(true);
+        setSubmitButtonDisabled(true);
 
         const token = tokenInputRef.current.value;
 
@@ -29,7 +29,7 @@ export default function Login({ setToken, setAppOrgDetails }) {
             pixelbin.organization.getAppOrgDetails()
         );
 
-        setValidateButtonDisabled(false);
+        setSubmitButtonDisabled(false);
 
         if (error?.code === 401) {
             setErrorMessage(error.details.error);
@@ -42,26 +42,63 @@ export default function Login({ setToken, setAppOrgDetails }) {
 
     return (
         <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
-            <div style={{ display: "flex", gap: "1rem", flexDirection: "column", alignItems: "center" }}>
-                <sp-heading style={{ marginTop: 0 }}>
-                    <img className="icon" src="./assets/icon.png" />
-                    Log in to use Erase.bg for Photoshop
-                </sp-heading>
-                <sp-divider style={{ margin: "1rem 0" }}></sp-divider>
-                <div style={{ display: "flex", gap: "1rem" }}>
-                    <sp-textfield
-                        ref={tokenInputRef}
-                        name="token"
-                        placeholder="Enter API Token"
-                    ></sp-textfield>
-                    <sp-action-button style={{ marginLeft: "0.5rem" }} disabled={validateButtonDisabled ? true : undefined} onClick={handleFormSubmit}>Validate</sp-action-button>
-                </div>
-                <a style={{ marginTop: "2rem" }} href="https://console.pixelbin.io/choose-org?redirectTo=settings/apps">
+            <div
+                style={{
+                    display: "flex",
+                    gap: "1rem",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
+                <sp-body
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        margin: "1rem 0",
+                    }}
+                    size="XL"
+                >
+                    <img
+                        className="icon"
+                        src="./icons/erasebg.png"
+                        style={{ marginRight: "1rem" }}
+                    />
+                    Log in
+                </sp-body>
+                <sp-textfield
+                    ref={tokenInputRef}
+                    name="token"
+                    placeholder="Enter API Token"
+                ></sp-textfield>
+                <sp-action-button
+                    style={{ marginTop: "0.5rem" }}
+                    disabled={submitButtonDisabled ? true : undefined}
+                    onClick={handleSubmitClick}
+                >
+                    Submit
+                </sp-action-button>
+                <sp-link
+                    quiet
+                    style={{ marginTop: "2rem" }}
+                    href="https://console.pixelbin.io/choose-org?redirectTo=settings/apps"
+                >
                     Get your API token
-                </a>
+                </sp-link>
             </div>
 
-            {errorMessage && <sp-body>{errorMessage}</sp-body>}
+            {errorMessage && (
+                <sp-body
+                    style={{
+                        backgroundColor: "rgba(255, 0, 0, 0.4)",
+                        borderRadius: "4px",
+                        margin: "1rem",
+                        padding: "1rem",
+                        border: "4px solid darkred",
+                    }}
+                >
+                    {errorMessage}
+                </sp-body>
+            )}
         </div>
     );
 }

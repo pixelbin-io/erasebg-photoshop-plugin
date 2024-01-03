@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import Login from "../components/Login";
-import RemoveBackground from "../components/RemoveBackground";
+import { Login } from "../components/Login";
+import { RemoveBackground } from "../components/RemoveBackground";
 
 const parseJSON = (value) => {
     try {
