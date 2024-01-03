@@ -9,24 +9,12 @@ const removeBackgroundPanelController = new PanelController(() => <RemoveBackgro
     id: "removeBackground",
     menuItems: [
         {
-            id: "reload",
-            label: "Reload plugin",
-            enabled: true,
-            checked: false,
-            onInvoke: () => location.reload(),
-        },
-        {
             id: "logout",
             label: "Logout",
             enabled: true,
             checked: false,
             onInvoke: () => {
-                const apiKey = localStorage.getItem("apikey");
-
-                if (apiKey) {
-                    localStorage.removeItem("apikey");
-                }
-
+                localStorage.clear();
                 location.reload();
             },
         },
@@ -45,7 +33,13 @@ entrypoints.setup({
     },
     commands: {
         async goToDashboard() {
-            await shell.openExternal("https://console.pixelbin.io/choose-org?redirectTo=storage"); // update to console home with orgId from token
+            await shell.openExternal("https://console.pixelbin.io/choose-org?redirectTo=storage");
+        },
+        async buyCredits() {
+            await shell.openExternal("https://console.pixelbin.io/choose-org?redirectTo=settings/billing/pricing");
+        },
+        async howItWorks() {
+            await shell.openExternal("https://www.pixelbin.io/docs/integrations/photoshop/");
         },
     },
     panels: {

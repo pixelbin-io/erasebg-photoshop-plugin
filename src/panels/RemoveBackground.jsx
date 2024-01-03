@@ -39,7 +39,7 @@ export const RemoveBackground = () => {
     let initialAddShadow = false;
     let initialRefine = true;
 
-    const filters = sessionStorage.getItem("filters");
+    const filters = localStorage.getItem("filters");
 
     if (filters) {
         const { industryType, addShadow, refine } = JSON.parse(filters);
@@ -52,6 +52,7 @@ export const RemoveBackground = () => {
     const [industryType, setIndustryType] = useState(initialIndustryType);
     const [addShadow, setAddShadow] = useState(initialAddShadow);
     const [refine, setRefine] = useState(initialRefine);
+    const [applyButtonDisabled, setApplyButtonDisabled] = useState(false);
 
     // useEffect(() => {
     //     axios.get(
@@ -73,6 +74,8 @@ export const RemoveBackground = () => {
     const handleApply = async (e) => {
         e.preventDefault();
 
+        setApplyButtonDisabled(true);
+
         const filters = {
             industryType,
             addShadow,
@@ -81,11 +84,13 @@ export const RemoveBackground = () => {
 
         const transformation = transformations.EraseBG.bg(filters);
 
-        const apiSecret = window.localStorage.getItem("apikey");
+        const apiSecret = localStorage.getItem("apikey");
 
         await removeBackground(transformation, apiSecret);
 
-        window.localStorage.setItem("filters", JSON.stringify(filters));
+        localStorage.setItem("filters", JSON.stringify(filters));
+
+        setApplyButtonDisabled(false);
     };
 
     const handleIndustryTypeChange = e => setIndustryType(e.target.value);
@@ -199,7 +204,7 @@ export const RemoveBackground = () => {
                     </div>
                     <span>Reset all</span>
                 </sp-action-button>
-                <sp-button onClick={handleApply}>
+                <sp-button onClick={handleApply} disabled={applyButtonDisabled ? true : undefined}>
                     Apply
                 </sp-button>
             </footer>

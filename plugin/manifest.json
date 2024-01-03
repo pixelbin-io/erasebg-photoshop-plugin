@@ -1,6 +1,6 @@
 {
     "id": "erasebg",
-    "name": "EraseBG",
+    "name": "Erase.bg",
     "version": "1.0.0",
     "main": "index.html",
     "manifestVersion": 5,
@@ -24,6 +24,7 @@
             "domains": [
                 "https://api.pixelbin.io",
                 "https://cdn.pixelbin.io",
+                "https://www.pixelbin.io",
                 "https://api.pixelbinz0.de",
                 "http://localhost:9002"
             ]
@@ -36,47 +37,33 @@
         {
             "type": "command",
             "id": "goToDashboard",
-            "label": {
-                "default": "Go to dashboard"
-            }
+            "label": { "default": "Go to dashboard" }
+        },
+        {
+            "type": "command",
+            "id": "buyCredits",
+            "label": { "default": "Buy credits" }
+        },
+        {
+            "type": "command",
+            "id": "howItWorks",
+            "label": { "default": "How it works" }
         },
         {
             "type": "panel",
             "id": "removeBackground",
-            "label": {
-                "default": "Remove background (Erase.bg)"
-            },
-            "minimumSize": {
-                "width": 260,
-                "height": 500
-            },
-            "maximumSize": {
-                "width": 260,
-                "height": 500
-            },
-            "preferredDockedSize": {
-                "width": 260,
-                "height": 500
-            },
-            "preferredFloatingSize": {
-                "width": 260,
-                "height": 500
-            },
+            "label": { "default": "Remove background (Erase.bg)" },
+            "minimumSize": { "width": 260, "height": 500 },
+            "maximumSize": { "width": 260, "height": 500 },
+            "preferredDockedSize": { "width": 260, "height": 500 },
+            "preferredFloatingSize": { "width": 260, "height": 500 },
             "icons": [
                 {
-                    "width": 32,
-                    "height": 32,
-                    "path": "icons/icon_D.png",
+                    "width": 23,
+                    "height": 23,
+                    "path": "icons/erasebg.png",
                     "scale": [1, 2],
-                    "theme": ["dark", "darkest"],
-                    "species": ["generic"]
-                },
-                {
-                    "width": 32,
-                    "height": 32,
-                    "path": "icons/icon_N.png",
-                    "scale": [1, 2],
-                    "theme": ["lightest", "light"],
+                    "theme": ["all"],
                     "species": ["generic"]
                 }
             ]
@@ -84,19 +71,11 @@
     ],
     "icons": [
         {
-            "width": 32,
-            "height": 32,
-            "path": "icons/icon_D.png",
+            "width": 23,
+            "height": 23,
+            "path": "icons/erasebg.png",
             "scale": [1, 2],
-            "theme": ["dark", "darkest"],
-            "species": ["generic"]
-        },
-        {
-            "width": 32,
-            "height": 32,
-            "path": "icons/icon_N.png",
-            "scale": [1, 2],
-            "theme": ["lightest", "light"],
+            "theme": ["all"],
             "species": ["generic"]
         }
     ]
