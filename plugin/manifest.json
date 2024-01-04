@@ -22,11 +22,11 @@
         },
         "network": {
             "domains": [
+                "https://console.pixelbin.io",
                 "https://api.pixelbin.io",
                 "https://cdn.pixelbin.io",
                 "https://www.pixelbin.io",
-                "https://api.pixelbinz0.de",
-                "http://localhost:9002"
+                "https://www.erase.bg"
             ]
         },
         "ipc": {
@@ -52,11 +52,11 @@
         {
             "type": "panel",
             "id": "app",
-            "label": { "default": "Remove background (Erase.bg)" },
-            "minimumSize": { "width": 260, "height": 500 },
-            "maximumSize": { "width": 260, "height": 500 },
-            "preferredDockedSize": { "width": 260, "height": 500 },
-            "preferredFloatingSize": { "width": 260, "height": 500 },
+            "label": { "default": "Remove Background (Erase.bg)" },
+            "minimumSize": { "width": 260, "height": 640 },
+            "maximumSize": { "width": 260, "height": 640 },
+            "preferredDockedSize": { "width": 260, "height": 640 },
+            "preferredFloatingSize": { "width": 260, "height": 640 },
             "icons": [
                 {
                     "width": 23,

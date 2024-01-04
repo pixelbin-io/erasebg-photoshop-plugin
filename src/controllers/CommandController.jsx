@@ -18,10 +18,10 @@ export class CommandController {
             {},
             {
                 title: id,
-                resize: "none",
+                resize: "both",
                 size: {
                     width: 480,
-                    height: 320,
+                    height: 120,
                 },
             },
             dialogOpts

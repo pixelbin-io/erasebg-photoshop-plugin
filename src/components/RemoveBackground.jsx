@@ -1,9 +1,31 @@
 import React, { useState } from "react";
-import { RefreshIcon } from "./Icons";
+import { HelpIcon, RefreshIcon } from "./Icons";
 import { WC } from "./WC";
-import { removeBackground } from "../utils";
+import { handle, removeBackground } from "../utils";
 import { CommandController } from "../controllers/CommandController";
 import { ErrorAlertDialog } from "./ErrorAlertDialog";
+import Loader from "./Loader";
+import { CreditsInformation } from "./CreditsInformation";
+
+const LoadingBackdrop = () => {
+    return (
+        <div
+            style={{
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(0, 0, 0, 0.9)",
+                zIndex: 1,
+                margin: "-1rem",
+            }}
+        >
+            <Loader />
+        </div>
+    );
+};
 
 export const RemoveBackground = ({
     appOrgDetails,
@@ -20,12 +42,12 @@ export const RemoveBackground = ({
     const [industryType, setIndustryType] = useState(initialIndustryType);
     const [addShadow, setAddShadow] = useState(initialAddShadow);
     const [refine, setRefine] = useState(initialRefine);
-    const [applyButtonDisabled, setApplyButtonDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleApply = async (e) => {
         e.preventDefault();
 
-        setApplyButtonDisabled(true);
+        setLoading(true);
 
         const filters = {
             industryType,
@@ -33,20 +55,30 @@ export const RemoveBackground = ({
             refine,
         };
 
-        try {
-            await removeBackground({ appOrgDetails, filters, token });
-        } catch (error) {
+        const [, error] = await handle(
+            removeBackground({
+                appOrgDetails,
+                filters,
+                token,
+            })
+        );
+
+        if (error) {
             const errorAlertDialogController = new CommandController(
                 ({ dialog }) => (
-                    <ErrorAlertDialog dialog={dialog} error={error} />
-                )
+                    <ErrorAlertDialog
+                        dialog={dialog}
+                        error={error?.message || "Something went wrong"}
+                    />
+                ),
+                { id: "Transformation error" }
             );
 
             await errorAlertDialogController.run();
         }
 
         setFilters(filters);
-        setApplyButtonDisabled(false);
+        setLoading(false);
     };
 
     const handleIndustryTypeChange = (e) => setIndustryType(e.target.value);
@@ -74,7 +106,55 @@ export const RemoveBackground = ({
                 padding: "1rem",
             }}
         >
-            <main>
+            {loading && <LoadingBackdrop />}
+            <header
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "2rem",
+                }}
+            >
+                <a href="https://www.erase.bg">
+                    <img
+                        style={{ height: "28px" }}
+                        src="https://cdn.pixelbin.io/v2/dummy-cloudname/original/common_assets/logos/erasebg-logo.png"
+                    />
+                </a>
+                <a
+                    href="https://www.pixelbin.io/docs/integrations/photoshop/"
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "var(--uxp-host-text-color)",
+                        fontSize: "var(--uxp-host-font-size)",
+                    }}
+                >
+                    <span
+                        style={{
+                            fill: "currentcolor",
+                            marginRight: "0.2rem",
+                            display: "inline-block",
+                        }}
+                    >
+                        <HelpIcon />
+                    </span>
+                    How it works?
+                </a>
+            </header>
+            {/* <sp-divider style={{ margin: "1rem 0" }}></sp-divider> */}
+            <main
+                id="erasebg-form"
+                style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: "-16px",
+                    padding: "16px",
+                    borderRadius: "4px",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                }}
+            >
                 <WC onChange={handleIndustryTypeChange}>
                     <div
                         style={{
@@ -163,33 +243,48 @@ export const RemoveBackground = ({
                         </sp-action-button>
                     </div>
                 </WC>
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: "1rem",
+                        width: "100%",
+                        marginTop: "auto",
+                    }}
+                >
+                    <sp-action-button
+                        variant="secondary"
+                        onClick={handleResetAll}
+                        quiet
+                    >
+                        <div slot="icon">
+                            <RefreshIcon />
+                        </div>
+                        <span>Reset all</span>
+                    </sp-action-button>
+                    <sp-button
+                        onClick={handleApply}
+                        disabled={loading ? true : undefined}
+                    >
+                        Apply
+                    </sp-button>
+                </div>
             </main>
+
+            {/* <sp-divider style={{ margin: "2rem 0" }}></sp-divider> */}
+
             <footer
                 style={{
+                    marginTop: "2rem",
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: "1rem",
-                    width: "100%",
-                    marginTop: "auto",
+                    flexDirection: "column",
                 }}
             >
-                <sp-action-button
-                    variant="secondary"
-                    onClick={handleResetAll}
-                    quiet
-                >
-                    <div slot="icon">
-                        <RefreshIcon />
-                    </div>
-                    <span>Reset all</span>
-                </sp-action-button>
-                <sp-button
-                    onClick={handleApply}
-                    disabled={applyButtonDisabled ? true : undefined}
-                >
-                    Apply
-                </sp-button>
+                <CreditsInformation
+                    appOrgDetails={appOrgDetails}
+                    token={token}
+                />
             </footer>
         </div>
     );

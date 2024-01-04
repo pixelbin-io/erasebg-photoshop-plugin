@@ -8,19 +8,30 @@ export const WC = (props) => {
         if (props[propName]) {
             props[propName].call(evt.target, evt);
         }
-    }
+    };
 
     useEffect(() => {
         const el = elRef.current;
-        const eventProps = Object.entries(props).filter(([k,v]) => k.startsWith("on"));
-        eventProps.forEach(([k,v]) => el.addEventListener(k.slice(2).toLowerCase(), handleEvent));
+        const eventProps = Object.entries(props).filter(([k, v]) =>
+            k.startsWith("on")
+        );
+        eventProps.forEach(([k, v]) =>
+            el.addEventListener(k.slice(2).toLowerCase(), handleEvent)
+        );
 
         return () => {
-            const el = elRef.current;
-            const eventProps = Object.entries(props).filter(([k,v]) => k.startsWith("on"));
-            eventProps.forEach(([k,v]) => el.removeEventListener(k.slice(2).toLowerCase(), handleEvent));
-        }
+            const eventProps = Object.entries(props).filter(([k, v]) =>
+                k.startsWith("on")
+            );
+            eventProps.forEach(([k, v]) =>
+                el.removeEventListener(k.slice(2).toLowerCase(), handleEvent)
+            );
+        };
     }, []);
 
-    return <div ref={elRef} {...props}>{props.children}</div>
-}
+    return (
+        <div ref={elRef} {...props}>
+            {props.children}
+        </div>
+    );
+};

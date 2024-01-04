@@ -94,6 +94,28 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer;
 }
 
+const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+const MAX_RETRIES = 3;
+
+export async function fetchLazyTransformation(url, attempt = 0) {
+    const response = await axios.get(url, {
+        responseType: "arraybuffer",
+    });
+
+    if (response.status === 202) {
+        if (attempt > MAX_RETRIES) {
+            throw Error("Your transformation took too long to process");
+        }
+
+        await wait(2 ** attempt * 500); // Will retry after 500, 1000, 2000 ... milliseconds, upto 2 minutes
+
+        return await fetchLazyTransformation(url, attempt + 1);
+    }
+
+    return response;
+}
+
 export const removeBackground = async ({ appOrgDetails, filters, token }) => {
     const config = new PixelbinConfig({
         domain: "https://api.pixelbin.io",
@@ -102,10 +124,24 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
 
     const pixelbin = new PixelbinClient(config);
 
-    const originalImageLayer =
-        photoshop.app.activeDocument.activeLayers.at(0);
+    const { activeLayers } = photoshop.app.activeDocument;
 
-    await photoshop.core.executeAsModal(async () => {
+    if (!activeLayers.length) {
+        throw Error("No layer selected");
+    }
+
+    if (activeLayers.length > 1) {
+        throw Error("Only one layer can be selected for transformation");
+    }
+
+    const originalImageLayer = activeLayers.at(0);
+
+    await photoshop.core.executeAsModal(async (executionContext) => {
+        const suspensionID = await executionContext.hostControl.suspendHistory({
+            documentID: originalImageLayer._docId,
+            name: "Remove Background (Erase.bg)"
+        });
+
         // await getSmartObjectInfo(
         //     originalImageLayer._id,
         //     originalImageLayer._docId
@@ -154,12 +190,9 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
         const transformation = transformations.EraseBG.bg(filters);
         pixelbinImage.setTransformation(transformation);
 
-        const transformationURL = pixelbinImage.getUrl().replace("i:", "ta:");
+        const transformationURL = pixelbinImage.getUrl();
 
-        const { data: transformedImageBuffer } = await axios(
-            transformationURL,
-            { responseType: "arraybuffer" }
-        );
+        const { data: transformedImageBuffer } = await fetchLazyTransformation(transformationURL);
 
         const transformedImageFile = await folder.createFile(
             originalImageLayer.name + " - background removed",
@@ -196,9 +229,59 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
         originalImagePixels.imageData.dispose();
 
         originalImageLayer.visible = false;
-    });
+
+        await executionContext.hostControl.resumeHistory(suspensionID);
+    }, { interactive: true });
 };
 
 export const handle = (promise) => {
     return promise.then((data) => [data, null]).catch((error) => [null, error]);
 };
+
+export const getUsage = async (token) => {
+    const config = new PixelbinConfig({
+        domain: "https://api.pixelbin.io",
+        apiSecret: token,
+    });
+
+    const pixelbin = new PixelbinClient(config);
+
+    // const usage = pixelbin.payment.getUsage();
+
+    const usage = {
+        "usage": {
+            "storage": 101730347423394
+        },
+        "credits": {
+            "used": 2100468.720988592
+        },
+        "total": {
+            "storage": 100000,
+            "credits": 100000
+        }
+    };
+
+    return usage;
+}
+
+export function abbreviateNumber(number = 0) {
+    number = Math.round(number);
+
+    const SI_SYMBOL = ["", "K", "M", "G", "T", "P", "E"];
+
+    // what tier? (determines SI symbol)
+    const tier = Math.floor(Math.log10(Math.abs(number)) / 3);
+
+    // if zero, we don't need a suffix
+    if (tier == 0) return number;
+
+    // get suffix and determine scale
+    const suffix = SI_SYMBOL[tier];
+    const scale = Math.pow(10, tier * 3);
+
+    // scale the number
+    const scaled = number / scale;
+
+    // format number and add suffix
+    return parseFloat(scaled.toFixed(1)) + suffix;
+}
