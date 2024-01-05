@@ -53,10 +53,10 @@
             "type": "panel",
             "id": "app",
             "label": { "default": "Remove Background (Erase.bg)" },
-            "minimumSize": { "width": 260, "height": 640 },
-            "maximumSize": { "width": 260, "height": 640 },
-            "preferredDockedSize": { "width": 260, "height": 640 },
-            "preferredFloatingSize": { "width": 260, "height": 640 },
+            "minimumSize": { "width": 260, "height": 540 },
+            "maximumSize": { "width": 260, "height": 540 },
+            "preferredDockedSize": { "width": 260, "height": 540 },
+            "preferredFloatingSize": { "width": 260, "height": 540 },
             "icons": [
                 {
                     "width": 23,

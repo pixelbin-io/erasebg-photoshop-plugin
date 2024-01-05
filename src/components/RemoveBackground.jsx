@@ -149,13 +149,16 @@ export const RemoveBackground = ({
                     flex: 1,
                     display: "flex",
                     flexDirection: "column",
-                    margin: "-16px",
+                    margin: "-16px -12px",
                     padding: "16px",
                     borderRadius: "4px",
                     backgroundColor: "rgba(0, 0, 0, 0.4)",
                 }}
             >
-                <WC onChange={handleIndustryTypeChange}>
+                <WC
+                    onChange={handleIndustryTypeChange}
+                    style={{ marginBottom: "6px" }}
+                >
                     <div
                         style={{
                             display: "flex",
@@ -172,6 +175,7 @@ export const RemoveBackground = ({
                             variant="secondary"
                             quiet
                             onClick={handleIndustryTypeResetClick}
+                            style={{ padding: 0 }}
                         >
                             <span>Reset</span>
                         </sp-action-button>
@@ -209,13 +213,17 @@ export const RemoveBackground = ({
                             width: "100%",
                         }}
                     >
-                        <sp-checkbox checked={addShadow ? true : undefined}>
-                            Add Shadow (Cars Only)
+                        <sp-checkbox
+                            style={{ marginBottom: "6px" }}
+                            checked={addShadow ? true : undefined}
+                        >
+                            Add shadow (cars only)
                         </sp-checkbox>
                         <sp-action-button
                             variant="secondary"
                             quiet
                             onClick={handleAddShadowResetClick}
+                            style={{ padding: 0 }}
                         >
                             <span>Reset</span>
                         </sp-action-button>
@@ -231,13 +239,17 @@ export const RemoveBackground = ({
                             width: "100%",
                         }}
                     >
-                        <sp-checkbox checked={refine ? true : undefined}>
-                            Refine Output
+                        <sp-checkbox
+                            style={{ marginBottom: "6px" }}
+                            checked={refine ? true : undefined}
+                        >
+                            Refine output
                         </sp-checkbox>
                         <sp-action-button
                             variant="secondary"
                             quiet
                             onClick={handleRefineResetClick}
+                            style={{ padding: 0 }}
                         >
                             <span>Reset</span>
                         </sp-action-button>
@@ -257,6 +269,7 @@ export const RemoveBackground = ({
                         variant="secondary"
                         onClick={handleResetAll}
                         quiet
+                        style={{ padding: 0 }}
                     >
                         <div slot="icon">
                             <RefreshIcon />
