@@ -14,14 +14,16 @@ export class PanelController {
         this[_Component] = Component;
         this[_menuItems] = menuItems;
 
-        this.menuItems = this[_menuItems].map(menuItem => ({
+        this.menuItems = this[_menuItems].map((menuItem) => ({
             id: menuItem.id,
             label: menuItem.label,
-            enabled: menuItem.enabled || true,
-            checked: menuItem.checked || false
+            enabled: menuItem.enabled ?? true,
+            checked: menuItem.checked ?? false,
         }));
 
-        ["create", "show", "hide", "destroy", "invokeMenu"].forEach(fn => this[fn] = this[fn].bind(this));
+        ["create", "show", "hide", "destroy", "invokeMenu"].forEach(
+            (fn) => (this[fn] = this[fn].bind(this))
+        );
     }
 
     create() {
@@ -32,7 +34,7 @@ export class PanelController {
 
         const root = createRoot(domNode);
 
-        root.render(this[_Component]({ panel: this }));
+        root.render(this[_Component]({ panel: { ...this, id: this[_id] } }));
 
         this[_root] = domNode;
 
@@ -52,10 +54,12 @@ export class PanelController {
         }
     }
 
-    destroy() { }
+    destroy() {}
 
     invokeMenu(id) {
-        const menuItem = this[_menuItems].find(menuItem => menuItem.id === id);
+        const menuItem = this[_menuItems].find(
+            (menuItem) => menuItem.id === id
+        );
 
         menuItem?.onInvoke?.();
     }

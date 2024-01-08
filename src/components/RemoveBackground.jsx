@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { HelpIcon, RefreshIcon } from "./Icons";
 import { WC } from "./WC";
 import { handle, removeBackground } from "../utils";
@@ -142,7 +143,6 @@ export const RemoveBackground = ({
                     How it works?
                 </a>
             </header>
-            {/* <sp-divider style={{ margin: "1rem 0" }}></sp-divider> */}
             <main
                 id="erasebg-form"
                 style={{
@@ -284,8 +284,6 @@ export const RemoveBackground = ({
                     </sp-button>
                 </div>
             </main>
-
-            {/* <sp-divider style={{ margin: "2rem 0" }}></sp-divider> */}
 
             <footer
                 style={{

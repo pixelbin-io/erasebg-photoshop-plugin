@@ -1,32 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { entrypoints } from "uxp";
 
 import { Login } from "../components/Login";
 import { RemoveBackground } from "../components/RemoveBackground";
+import { storage } from "../utils";
 
-const parseJSON = (value) => {
-    try {
-        return JSON.parse(value);
-    } catch (error) {
-        return value;
-    }
-};
-
-const storage = {
-    getItem(name) {
-        const value = localStorage.getItem(name);
-        return value ? parseJSON(value) : undefined;
-    },
-    setItem(name, value) {
-        localStorage.setItem(name, JSON.stringify(value));
-    },
-};
-
-export const App = () => {
+export const App = ({ panel }) => {
     const [token, setToken] = useState(storage.getItem("token"));
     const [filters, setFilters] = useState(storage.getItem("filters"));
     const [appOrgDetails, setAppOrgDetails] = useState(
         storage.getItem("appOrgDetails")
     );
+
+    const isUserLoggedIn = Boolean(token);
+
+    useEffect(() => {
+        entrypoints.getPanel(panel.id).menuItems.getItem("logout").enabled =
+            isUserLoggedIn;
+    }, [isUserLoggedIn, panel]);
 
     const _setToken = (token) => {
         storage.setItem("token", token);
@@ -42,8 +33,6 @@ export const App = () => {
         storage.setItem("appOrgDetails", appOrgDetails);
         setAppOrgDetails(appOrgDetails);
     };
-
-    const isUserLoggedIn = Boolean(token);
 
     if (isUserLoggedIn) {
         return (

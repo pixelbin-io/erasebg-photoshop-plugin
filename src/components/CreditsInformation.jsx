@@ -7,7 +7,7 @@ export function CreditsInformation({ appOrgDetails, token }) {
     const [usage, setUsage] = useState({});
 
     useEffect(() => {
-        getUsage(token).then((data) => setUsage(data));
+        getUsage(token).then(setUsage);
     }, [token]);
 
     const handleBuyCreditsButtonClick = async () => {

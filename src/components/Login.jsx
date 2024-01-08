@@ -9,7 +9,7 @@ export function Login({ setToken, setAppOrgDetails }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
     const [tokenInputValue, setTokenInputValue] = useState("");
-    // const [tokenInputVisible, setTokenInputVisible] = useState(false);
+    // const [tokenInputVisible, setTokenInputVisible] = useState(true);
 
     const handleSubmitClick = async (e) => {
         e.preventDefault();
@@ -18,10 +18,7 @@ export function Login({ setToken, setAppOrgDetails }) {
 
         const config = new PixelbinConfig({
             domain: "https://api.pixelbin.io",
-            // apiSecret: "a11a14e5-2671-42d3-bc42-bd0efaccbd52",
             apiSecret: tokenInputValue,
-            // domain: "https://api.pixelbinz0.de",
-            // apiSecret: "098b0072-dd31-40b3-8617-679e749b0455",
         });
 
         const pixelbin = new PixelbinClient(config);

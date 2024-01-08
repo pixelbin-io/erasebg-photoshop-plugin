@@ -6,30 +6,36 @@ import { CommandController } from "./controllers/CommandController";
 import { PanelController } from "./controllers/PanelController";
 import { App } from "./panels/App";
 import "./styles.css";
+import { storage } from "./utils";
 
-const appPanelController = new PanelController(() => <App />, {
-    id: "app",
-    menuItems: [
-        {
-            id: "logout",
-            label: "Logout",
-            enabled: true,
-            checked: false,
-            onInvoke: async () => {
-                const confirmationDialogController = new CommandController(
-                    ({ dialog }) => <ConfirmationDialog dialog={dialog} />
-                );
+const isUserLoggedIn = Boolean(storage.getItem("token"));
 
-                const logout = await confirmationDialogController.run();
+const appPanelController = new PanelController(
+    ({ panel }) => <App panel={panel} />,
+    {
+        id: "app",
+        menuItems: [
+            {
+                id: "logout",
+                label: "Logout",
+                enabled: isUserLoggedIn,
+                checked: false,
+                onInvoke: async () => {
+                    const confirmationDialogController = new CommandController(
+                        ({ dialog }) => <ConfirmationDialog dialog={dialog} />
+                    );
 
-                if (logout === "YES") {
-                    localStorage.clear();
-                    location.reload();
-                }
+                    const logout = await confirmationDialogController.run();
+
+                    if (logout === "YES") {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                },
             },
-        },
-    ],
-});
+        ],
+    }
+);
 
 entrypoints.setup({
     plugin: {

@@ -238,7 +238,7 @@ export const handle = (promise) => {
     return promise.then((data) => [data, null]).catch((error) => [null, error]);
 };
 
-export const getUsage = async (token) => {
+export const getUsage = (token) => {
     const config = new PixelbinConfig({
         domain: "https://api.pixelbin.io",
         apiSecret: token,
@@ -246,22 +246,7 @@ export const getUsage = async (token) => {
 
     const pixelbin = new PixelbinClient(config);
 
-    // const usage = pixelbin.payment.getUsage();
-
-    const usage = {
-        "usage": {
-            "storage": 101730347423394
-        },
-        "credits": {
-            "used": 2100468.720988592
-        },
-        "total": {
-            "storage": 100000,
-            "credits": 100000
-        }
-    };
-
-    return usage;
+    return pixelbin.billing.getUsage();
 }
 
 export function abbreviateNumber(number = 0) {
@@ -285,3 +270,21 @@ export function abbreviateNumber(number = 0) {
     // format number and add suffix
     return parseFloat(scaled.toFixed(1)) + suffix;
 }
+
+const parseJSON = (value) => {
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        return value;
+    }
+};
+
+export const storage = {
+    getItem(name) {
+        const value = localStorage.getItem(name);
+        return value ? parseJSON(value) : undefined;
+    },
+    setItem(name, value) {
+        localStorage.setItem(name, JSON.stringify(value));
+    },
+};
