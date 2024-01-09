@@ -99,9 +99,21 @@ const wait = (ms) => new Promise((res) => setTimeout(res, ms));
 const MAX_RETRIES = 3;
 
 export async function fetchLazyTransformation(url, attempt = 0) {
-    const response = await axios.get(url, {
-        responseType: "arraybuffer",
-    });
+    let response;
+
+    try {
+        response = await axios.get(url, { responseType: "arraybuffer" });
+    } catch (error) {
+        if (error.response) {
+            // response would be a arraybuffer, hence parsing
+            const blob = new Blob([error.response.data]);
+            const parsedError = JSON.parse(await blob.text());
+
+            throw Error(parsedError.message);
+        }
+
+        throw error;
+    }
 
     if (response.status === 202) {
         if (attempt > MAX_RETRIES) {
@@ -136,102 +148,114 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
 
     const originalImageLayer = activeLayers.at(0);
 
+    // errors are not properly thrown from inside executeAsModal function
+    // ref: https://forums.creativeclouddeveloper.com/t/bug-errors-thrown-inside-of-executeasmodal-are-being-converted-to-strings/5431
+    let modalError = null;
+
     await photoshop.core.executeAsModal(async (executionContext) => {
         const suspensionID = await executionContext.hostControl.suspendHistory({
             documentID: originalImageLayer._docId,
             name: "Remove Background (Erase.bg)"
         });
 
-        // await getSmartObjectInfo(
-        //     originalImageLayer._id,
-        //     originalImageLayer._docId
-        // );
+        try {
+            // await getSmartObjectInfo(
+            //     originalImageLayer._id,
+            //     originalImageLayer._docId
+            // );
 
-        const originalImagePixels = await photoshop.imaging.getPixels({
-            layerID: originalImageLayer.id,
-            applyAlpha: true, // for image types with transparent backgrounds that cannot be handled by encodeImageData function below
-        });
+            const originalImagePixels = await photoshop.imaging.getPixels({
+                layerID: originalImageLayer._id,
+                applyAlpha: true, // for image types with transparent backgrounds that cannot be handled by encodeImageData function below
+            });
 
-        const jpegData = await photoshop.imaging.encodeImageData({
-            imageData: originalImagePixels.imageData,
-            base64: true,
-        });
+            const jpegData = await photoshop.imaging.encodeImageData({
+                imageData: originalImagePixels.imageData,
+                base64: true,
+            });
 
-        const imageBuffer = base64ToArrayBuffer(jpegData);
-        const imageName = originalImageLayer.name + ".jpeg";
+            const imageBuffer = base64ToArrayBuffer(jpegData);
+            const imageName = originalImageLayer.name + ".jpeg";
 
-        const folder =
-            await uxp.storage.localFileSystem.getTemporaryFolder();
+            const folder =
+                await uxp.storage.localFileSystem.getTemporaryFolder();
 
-        const uploadImageFile = await folder.createFile(imageName, {
-            overwrite: true,
-        });
+            const uploadImageFile = await folder.createFile(imageName, {
+                overwrite: true,
+            });
 
-        await uploadImageFile.write(imageBuffer, {
-            format: uxp.storage.formats.binary,
-        });
+            await uploadImageFile.write(imageBuffer, {
+                format: uxp.storage.formats.binary,
+            });
 
-        const { presignedUrl } = await pixelbin.assets.createSignedUrlV2({
-            path: "__photoshop",
-            format: "jpeg",
-            filenameOverride: true,
-        });
+            const { presignedUrl } = await pixelbin.assets.createSignedUrlV2({
+                path: "__photoshop",
+                format: "jpeg",
+                filenameOverride: true,
+            });
 
-        await Pixelbin.upload(imageBuffer, presignedUrl);
+            await Pixelbin.upload(imageBuffer, presignedUrl);
 
-        const { fileId } = JSON.parse(
-            presignedUrl.fields["x-pixb-meta-assetdata"]
-        );
+            const { fileId } = JSON.parse(
+                presignedUrl.fields["x-pixb-meta-assetdata"]
+            );
 
-        // const data = await pixelbin.assets.getFileByFileId({ fileId });
+            // const data = await pixelbin.assets.getFileByFileId({ fileId });
 
-        const pixelbinCore = new Pixelbin({ cloudName: appOrgDetails.org.cloudName });
-        const pixelbinImage = pixelbinCore.image(fileId);
-        const transformation = transformations.EraseBG.bg(filters);
-        pixelbinImage.setTransformation(transformation);
+            const pixelbinCore = new Pixelbin({ cloudName: appOrgDetails.org.cloudName });
+            const pixelbinImage = pixelbinCore.image(fileId);
+            const transformation = transformations.EraseBG.bg(filters);
+            pixelbinImage.setTransformation(transformation);
 
-        const transformationURL = pixelbinImage.getUrl();
+            const transformationURL = pixelbinImage.getUrl();
 
-        const { data: transformedImageBuffer } = await fetchLazyTransformation(transformationURL);
+            const { data: transformedImageBuffer } = await fetchLazyTransformation(transformationURL);
 
-        const transformedImageFile = await folder.createFile(
-            originalImageLayer.name + " - background removed",
-            { overwrite: true }
-        );
+            const transformedImageFile = await folder.createFile(
+                originalImageLayer.name + " - background removed",
+                { overwrite: true }
+            );
 
-        await transformedImageFile.write(transformedImageBuffer, {
-            format: uxp.storage.formats.binary,
-        });
+            await transformedImageFile.write(transformedImageBuffer, {
+                format: uxp.storage.formats.binary,
+            });
 
-        const currentDocument = photoshop.app.activeDocument;
-        const newDocument = await photoshop.app.open(transformedImageFile);
+            const currentDocument = photoshop.app.activeDocument;
+            const newDocument = await photoshop.app.open(transformedImageFile);
 
-        const transformedImageLayer =
-            await newDocument.activeLayers.at(0).duplicate(currentDocument);
+            const transformedImageLayer =
+                await newDocument.activeLayers.at(0).duplicate(currentDocument);
 
-        await newDocument.close(
-            photoshop.constants.SaveOptions.DONOTSAVECHANGES
-        );
+            await newDocument.close(
+                photoshop.constants.SaveOptions.DONOTSAVECHANGES
+            );
 
-        transformedImageLayer.name =
-            originalImageLayer.name + " - background removed";
+            transformedImageLayer.name =
+                originalImageLayer.name + " - background removed";
 
-        await changeLayerPosition(
-            transformedImageLayer,
-            originalImageLayer.bounds
-        );
+            await changeLayerPosition(
+                transformedImageLayer,
+                originalImageLayer.bounds
+            );
 
-        transformedImageLayer.move(
-            originalImageLayer,
-            photoshop.constants.ElementPlacement.PLACEBEFORE
-        );
+            transformedImageLayer.move(
+                originalImageLayer,
+                photoshop.constants.ElementPlacement.PLACEBEFORE
+            );
 
-        originalImagePixels.imageData.dispose();
+            originalImagePixels.imageData.dispose();
 
-        originalImageLayer.visible = false;
+            originalImageLayer.visible = false;
+        } catch (error) {
+            modalError = error;
+        }
 
         await executionContext.hostControl.resumeHistory(suspensionID);
     }, { interactive: true });
+
+    if (modalError) {
+        throw modalError;
+    }
 };
 
 export const handle = (promise) => {
