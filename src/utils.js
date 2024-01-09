@@ -249,8 +249,8 @@ export const getUsage = (token) => {
     return pixelbin.billing.getUsage();
 }
 
-export function abbreviateNumber(number = 0) {
-    number = Math.round(number);
+export function abbreviateNumber(number) {
+    if (!number) return number;
 
     const SI_SYMBOL = ["", "K", "M", "G", "T", "P", "E"];
 

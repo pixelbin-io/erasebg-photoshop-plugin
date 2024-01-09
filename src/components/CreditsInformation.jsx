@@ -4,7 +4,10 @@ import { shell } from "uxp";
 import { abbreviateNumber, getUsage } from "../utils";
 
 export function CreditsInformation({ appOrgDetails, token }) {
-    const [usage, setUsage] = useState({});
+    const [usage, setUsage] = useState({
+        credits: { used: 0 },
+        total: { credits: 0 },
+    });
 
     useEffect(() => {
         getUsage(token).then(setUsage);
@@ -30,8 +33,8 @@ export function CreditsInformation({ appOrgDetails, token }) {
             >
                 <span>Credits</span>{" "}
                 <span style={{ marginLeft: "auto" }}>
-                    {abbreviateNumber(usage.credits?.used)}/
-                    {abbreviateNumber(usage.total?.credits)} used
+                    {abbreviateNumber(Math.round(usage.credits.used || 0))}/
+                    {abbreviateNumber(usage.total.credits)} used
                 </span>
             </div>
             <sp-button
