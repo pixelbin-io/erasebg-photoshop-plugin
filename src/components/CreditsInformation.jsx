@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { shell } from "uxp";
 
-import { abbreviateNumber, getUsage } from "../utils";
+import { abbreviateNumber } from "../utils";
 
-export function CreditsInformation({ appOrgDetails, token }) {
-    const [usage, setUsage] = useState({
-        credits: { used: 0 },
-        total: { credits: 0 },
-    });
-
-    useEffect(() => {
-        getUsage(token).then(setUsage);
-    }, [token]);
-
+export function CreditsInformation({ appOrgDetails, usage }) {
     const handleBuyCreditsButtonClick = async () => {
         await shell.openExternal(
             `https://console.pixelbin.io/organization/${appOrgDetails.app.orgId}/settings/billing/pricing`

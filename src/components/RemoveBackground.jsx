@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { HelpIcon, RefreshIcon } from "./Icons";
 import { WC } from "./WC";
-import { handle, removeBackground } from "../utils";
+import { getUsage, handle, removeBackground } from "../utils";
 import { CommandController } from "../controllers/CommandController";
 import { ErrorAlertDialog } from "./ErrorAlertDialog";
 import Loader from "./Loader";
@@ -44,6 +44,17 @@ export const RemoveBackground = ({
     const [addShadow, setAddShadow] = useState(initialAddShadow);
     const [refine, setRefine] = useState(initialRefine);
     const [loading, setLoading] = useState(false);
+    const [usage, setUsage] = useState({
+        credits: { used: 0 },
+        total: { credits: 0 },
+    });
+
+    const updateUsage = () => getUsage(token).then(setUsage);
+
+    useEffect(() => {
+        updateUsage();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleApply = async (e) => {
         e.preventDefault();
@@ -78,6 +89,7 @@ export const RemoveBackground = ({
             await errorAlertDialogController.run();
         }
 
+        updateUsage();
         setFilters(filters);
         setLoading(false);
     };
@@ -294,7 +306,7 @@ export const RemoveBackground = ({
             >
                 <CreditsInformation
                     appOrgDetails={appOrgDetails}
-                    token={token}
+                    usage={usage}
                 />
             </footer>
         </div>
