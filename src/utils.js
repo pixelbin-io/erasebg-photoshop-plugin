@@ -3,6 +3,7 @@ import { PixelbinClient, PixelbinConfig } from "@pixelbin/admin";
 import axios from "axios";
 import photoshop from "photoshop";
 import uxp from "uxp";
+import { constants } from "./constants";
 
 // async function getSmartObjectInfo(layerId, docId) {
 //     const [res] = await require("photoshop").action.batchPlay(
@@ -130,7 +131,7 @@ export async function fetchLazyTransformation(url, attempt = 0) {
 
 export const removeBackground = async ({ appOrgDetails, filters, token }) => {
     const config = new PixelbinConfig({
-        domain: "https://api.pixelbin.io",
+        domain: constants.urls.apiDomain,
         apiSecret: token,
     });
 
@@ -264,7 +265,7 @@ export const handle = (promise) => {
 
 export const getUsage = (token) => {
     const config = new PixelbinConfig({
-        domain: "https://api.pixelbin.io",
+        domain: constants.urls.apiDomain,
         apiSecret: token,
     });
 

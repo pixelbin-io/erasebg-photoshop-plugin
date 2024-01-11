@@ -3,13 +3,39 @@ import { PixelbinClient, PixelbinConfig } from "@pixelbin/admin";
 
 import { handle } from "../utils";
 import { WC } from "./WC";
-// import { VisibilityIcon, VisibilityOffIcon } from "./Icons";
+import { constants } from "../constants";
+
+const styles = {
+    wrapper: { display: "flex", gap: "1rem", flexDirection: "column" },
+    main: {
+        display: "flex",
+        gap: "1rem",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    header: {
+        display: "flex",
+        alignItems: "center",
+        margin: "1rem 0",
+        color: "var(--uxp-host-text-color)",
+        fontSize: "20px",
+    },
+    productImage: { marginRight: "0.5rem", height: "32px" },
+    submitButton: { marginTop: "0.5rem" },
+    apiTokenLink: { marginTop: "2rem" },
+    errorMessage: {
+        backgroundColor: "rgba(255, 0, 0, 0.4)",
+        borderRadius: "4px",
+        margin: "1rem",
+        padding: "1rem",
+        border: "4px solid darkred",
+    },
+};
 
 export function Login({ setToken, setAppOrgDetails }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
     const [tokenInputValue, setTokenInputValue] = useState("");
-    // const [tokenInputVisible, setTokenInputVisible] = useState(true);
 
     const handleSubmitClick = async (e) => {
         e.preventDefault();
@@ -17,7 +43,7 @@ export function Login({ setToken, setAppOrgDetails }) {
         setSubmitButtonDisabled(true);
 
         const config = new PixelbinConfig({
-            domain: "https://api.pixelbin.io",
+            domain: constants.urls.apiDomain,
             apiSecret: tokenInputValue,
         });
 
@@ -42,33 +68,13 @@ export function Login({ setToken, setAppOrgDetails }) {
         setTokenInputValue(e.target.value);
     };
 
-    // const handleVisibilityToggleButtonClick = () => {
-    //     setTokenInputVisible(!tokenInputVisible);
-    // };
-
     return (
-        <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "1rem",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                <header
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        margin: "1rem 0",
-                        color: "var(--uxp-host-text-color)",
-                        fontSize: "20px",
-                    }}
-                >
+        <div style={styles.wrapper}>
+            <main style={styles.main}>
+                <header style={styles.header}>
                     <img
-                        className="icon"
                         src="./icons/erasebg.png"
-                        style={{ marginRight: "0.5rem", height: "32px" }}
+                        style={styles.productImage}
                     />
                     Login
                 </header>
@@ -78,20 +84,8 @@ export function Login({ setToken, setAppOrgDetails }) {
                         placeholder="Enter API Token"
                     ></sp-textfield>
                 </WC>
-                {/* <sp-action-button
-                    quiet
-                    onClick={handleVisibilityToggleButtonClick}
-                >
-                    <div slot="icon">
-                        {tokenInputVisible ? (
-                            <VisibilityIcon />
-                        ) : (
-                            <VisibilityOffIcon />
-                        )}
-                    </div>
-                </sp-action-button> */}
                 <sp-action-button
-                    style={{ marginTop: "0.5rem" }}
+                    style={styles.submitButton}
                     disabled={
                         !tokenInputValue || submitButtonDisabled
                             ? true
@@ -103,25 +97,15 @@ export function Login({ setToken, setAppOrgDetails }) {
                 </sp-action-button>
                 <sp-link
                     quiet
-                    style={{ marginTop: "2rem" }}
-                    href="https://console.pixelbin.io/choose-org?redirectTo=settings/apps"
+                    style={styles.apiTokenLink}
+                    href={constants.urls.redirectToAppsPage}
                 >
                     Get your API token
                 </sp-link>
-            </div>
+            </main>
 
             {errorMessage && (
-                <sp-body
-                    style={{
-                        backgroundColor: "rgba(255, 0, 0, 0.4)",
-                        borderRadius: "4px",
-                        margin: "1rem",
-                        padding: "1rem",
-                        border: "4px solid darkred",
-                    }}
-                >
-                    {errorMessage}
-                </sp-body>
+                <sp-body style={styles.errorMessage}>{errorMessage}</sp-body>
             )}
         </div>
     );

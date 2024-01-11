@@ -7,7 +7,7 @@
     "host": [
         {
             "app": "PS",
-            "minVersion": "23.0.1"
+            "minVersion": "23.3.0"
         }
     ],
     "requiredPermissions": {
@@ -15,10 +15,6 @@
         "launchProcess": {
             "schemes": ["http", "https"],
             "extensions": [".svg", ".png"]
-        },
-        "webview": {
-            "allow": "yes",
-            "domains": ["https://*.adobe.com", "https://*.google.com"]
         },
         "network": {
             "domains": [
@@ -28,9 +24,6 @@
                 "https://www.pixelbin.io",
                 "https://www.erase.bg"
             ]
-        },
-        "ipc": {
-            "enablePluginCommunication": true
         }
     },
     "entrypoints": [

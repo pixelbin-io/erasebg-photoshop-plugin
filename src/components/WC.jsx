@@ -5,6 +5,7 @@ export const WC = (props) => {
 
     const handleEvent = (evt) => {
         const propName = `on${evt.type[0].toUpperCase()}${evt.type.slice(1)}`;
+
         if (props[propName]) {
             props[propName].call(evt.target, evt);
         }
@@ -12,21 +13,22 @@ export const WC = (props) => {
 
     useEffect(() => {
         const el = elRef.current;
-        const eventProps = Object.entries(props).filter(([k, v]) =>
-            k.startsWith("on")
-        );
-        eventProps.forEach(([k, v]) =>
-            el.addEventListener(k.slice(2).toLowerCase(), handleEvent)
-        );
+
+        const events = Object.keys(props)
+            .filter((key) => key.startsWith("on"))
+            .map((key) => key.slice(2).toLocaleLowerCase());
+
+        for (const event of events) {
+            el.addEventListener(event, handleEvent);
+        }
 
         return () => {
-            const eventProps = Object.entries(props).filter(([k, v]) =>
-                k.startsWith("on")
-            );
-            eventProps.forEach(([k, v]) =>
-                el.removeEventListener(k.slice(2).toLowerCase(), handleEvent)
-            );
+            for (const event of events) {
+                el.removeEventListener(event, handleEvent);
+            }
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

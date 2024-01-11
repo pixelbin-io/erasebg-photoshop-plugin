@@ -7,6 +7,7 @@ import { PanelController } from "./controllers/PanelController";
 import { App } from "./panels/App";
 import "./styles.css";
 import { storage } from "./utils";
+import { constants } from "./constants";
 
 const isUserLoggedIn = Boolean(storage.getItem("token"));
 
@@ -49,19 +50,13 @@ entrypoints.setup({
     },
     commands: {
         async goToDashboard() {
-            await shell.openExternal(
-                "https://console.pixelbin.io/choose-org?redirectTo=storage"
-            );
+            await shell.openExternal(constants.urls.redirectToDashboardPage);
         },
         async buyCredits() {
-            await shell.openExternal(
-                "https://console.pixelbin.io/choose-org?redirectTo=settings/billing/pricing"
-            );
+            await shell.openExternal(constants.urls.redirectToPricingPage);
         },
         async howItWorks() {
-            await shell.openExternal(
-                "https://www.pixelbin.io/docs/integrations/photoshop/"
-            );
+            await shell.openExternal(constants.urls.pluginDoc);
         },
     },
     panels: {

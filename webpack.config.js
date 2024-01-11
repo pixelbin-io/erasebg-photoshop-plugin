@@ -1,6 +1,5 @@
 const path = require("path");
 const webpack = require("webpack");
-// const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
@@ -8,6 +7,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
+        clean: true
         //libraryTarget: "commonjs2"
     },
     devtool: 'eval-cheap-source-map', // won't work on XD due to lack of eval
@@ -55,7 +55,6 @@ module.exports = {
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
         }),
-        //new CleanWebpackPlugin(),
         new CopyPlugin(['plugin'], {
             copyUnmodified: true
         }),

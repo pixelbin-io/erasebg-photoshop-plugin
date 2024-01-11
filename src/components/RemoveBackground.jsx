@@ -7,25 +7,77 @@ import { CommandController } from "../controllers/CommandController";
 import { ErrorAlertDialog } from "./ErrorAlertDialog";
 import Loader from "./Loader";
 import { CreditsInformation } from "./CreditsInformation";
+import { constants } from "../constants";
 
-const LoadingBackdrop = () => {
-    return (
-        <div
-            style={{
-                position: "absolute",
-                height: "100%",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(0, 0, 0, 0.9)",
-                zIndex: 1,
-                margin: "-1rem",
-            }}
-        >
-            <Loader />
-        </div>
-    );
+const styles = {
+    loadingBackdrop: {
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(0, 0, 0, 0.9)",
+        zIndex: 1,
+        margin: "-1rem",
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "2rem",
+    },
+    wrapper: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        position: "relative",
+        padding: "1rem",
+    },
+    footer: {
+        marginTop: "2rem",
+        display: "flex",
+        flexDirection: "column",
+    },
+    actions: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: "1rem",
+        width: "100%",
+        marginTop: "auto",
+    },
+    paramSection: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: "1rem",
+        width: "100%",
+    },
+    paramGap: { marginBottom: "6px" },
+    form: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        margin: "-16px -12px",
+        padding: "16px",
+        borderRadius: "4px",
+        backgroundColor: "rgba(0, 0, 0, 0.4)",
+    },
+    helpIcon: {
+        fill: "currentcolor",
+        marginRight: "0.2rem",
+        display: "inline-block",
+    },
+    helpLink: {
+        display: "flex",
+        alignItems: "center",
+        color: "var(--uxp-host-text-color)",
+        fontSize: "var(--uxp-host-font-size)",
+    },
+    productImage: { height: "28px" },
+    resetButton: { padding: 0 },
+    industryTypePicker: { width: "100%" },
 };
 
 export const RemoveBackground = ({
@@ -110,76 +162,29 @@ export const RemoveBackground = ({
     };
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                position: "relative",
-                padding: "1rem",
-            }}
-        >
-            {loading && <LoadingBackdrop />}
-            <header
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "2rem",
-                }}
-            >
-                <a href="https://www.erase.bg">
+        <div style={styles.wrapper}>
+            {loading && (
+                <div style={styles.loadingBackdrop}>
+                    <Loader />
+                </div>
+            )}
+            <header style={styles.header}>
+                <a href={constants.urls.pluginHomePage}>
                     <img
-                        style={{ height: "28px" }}
-                        src="https://cdn.pixelbin.io/v2/dummy-cloudname/original/common_assets/logos/erasebg-logo.png"
+                        style={styles.productImage}
+                        src={constants.urls.pluginFullImage}
                     />
                 </a>
-                <a
-                    href="https://www.pixelbin.io/docs/integrations/photoshop/"
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "var(--uxp-host-text-color)",
-                        fontSize: "var(--uxp-host-font-size)",
-                    }}
-                >
-                    <span
-                        style={{
-                            fill: "currentcolor",
-                            marginRight: "0.2rem",
-                            display: "inline-block",
-                        }}
-                    >
+                <a href={constants.urls.pluginDoc} style={styles.helpLink}>
+                    <span style={styles.helpIcon}>
                         <HelpIcon />
                     </span>
                     How it works?
                 </a>
             </header>
-            <main
-                id="erasebg-form"
-                style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    margin: "-16px -12px",
-                    padding: "16px",
-                    borderRadius: "4px",
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                }}
-            >
-                <WC
-                    onChange={handleIndustryTypeChange}
-                    style={{ marginBottom: "6px" }}
-                >
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            gap: "1rem",
-                            width: "100%",
-                        }}
-                    >
+            <main id="erasebg-form" style={styles.form}>
+                <WC onChange={handleIndustryTypeChange} style={styles.paramGap}>
+                    <div style={styles.paramSection}>
                         <sp-label for="industry-type" size="m">
                             Industry type
                         </sp-label>
@@ -187,7 +192,7 @@ export const RemoveBackground = ({
                             variant="secondary"
                             quiet
                             onClick={handleIndustryTypeResetClick}
-                            style={{ padding: 0 }}
+                            style={styles.resetButton}
                         >
                             <span>Reset</span>
                         </sp-action-button>
@@ -196,7 +201,7 @@ export const RemoveBackground = ({
                         id="industry-type"
                         size="m"
                         label="Selection type"
-                        style={{ width: "100%" }}
+                        style={styles.industryTypePicker}
                     >
                         <sp-menu>
                             {options.map((option) => (
@@ -216,17 +221,9 @@ export const RemoveBackground = ({
                     </sp-picker>
                 </WC>
                 <WC onChange={handleAddShadowChange}>
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            gap: "1rem",
-                            width: "100%",
-                        }}
-                    >
+                    <div style={styles.paramSection}>
                         <sp-checkbox
-                            style={{ marginBottom: "6px" }}
+                            style={styles.paramGap}
                             checked={addShadow ? true : undefined}
                         >
                             Add shadow (cars only)
@@ -235,24 +232,16 @@ export const RemoveBackground = ({
                             variant="secondary"
                             quiet
                             onClick={handleAddShadowResetClick}
-                            style={{ padding: 0 }}
+                            style={styles.resetButton}
                         >
                             <span>Reset</span>
                         </sp-action-button>
                     </div>
                 </WC>
                 <WC onChange={handleRefineOutputChange}>
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            gap: "1rem",
-                            width: "100%",
-                        }}
-                    >
+                    <div style={styles.paramSection}>
                         <sp-checkbox
-                            style={{ marginBottom: "6px" }}
+                            style={styles.paramGap}
                             checked={refine ? true : undefined}
                         >
                             Refine output
@@ -261,27 +250,18 @@ export const RemoveBackground = ({
                             variant="secondary"
                             quiet
                             onClick={handleRefineResetClick}
-                            style={{ padding: 0 }}
+                            style={styles.resetButton}
                         >
                             <span>Reset</span>
                         </sp-action-button>
                     </div>
                 </WC>
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "1rem",
-                        width: "100%",
-                        marginTop: "auto",
-                    }}
-                >
+                <div style={styles.actions}>
                     <sp-action-button
                         variant="secondary"
                         onClick={handleResetAll}
                         quiet
-                        style={{ padding: 0 }}
+                        style={styles.resetButton}
                     >
                         <div slot="icon">
                             <RefreshIcon />
@@ -297,13 +277,7 @@ export const RemoveBackground = ({
                 </div>
             </main>
 
-            <footer
-                style={{
-                    marginTop: "2rem",
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
+            <footer style={styles.footer}>
                 <CreditsInformation
                     appOrgDetails={appOrgDetails}
                     usage={usage}
