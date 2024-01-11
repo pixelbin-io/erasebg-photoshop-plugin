@@ -24,11 +24,11 @@ const styles = {
     submitButton: { marginTop: "0.5rem" },
     apiTokenLink: { marginTop: "2rem" },
     errorMessage: {
-        backgroundColor: "rgba(255, 0, 0, 0.4)",
         borderRadius: "4px",
         margin: "1rem",
         padding: "1rem",
-        border: "4px solid darkred",
+        color: "rgb(255, 255, 255)",
+        backgroundColor: "rgb(244, 67, 54)",
     },
 };
 

@@ -62,7 +62,7 @@ const styles = {
         margin: "-16px -12px",
         padding: "16px",
         borderRadius: "4px",
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        border: "0.2px solid var(--uxp-host-text-color-secondary)",
     },
     helpIcon: {
         fill: "currentcolor",
@@ -75,9 +75,16 @@ const styles = {
         color: "var(--uxp-host-text-color)",
         fontSize: "var(--uxp-host-font-size)",
     },
-    productImage: { height: "28px" },
+    productFullLogo: {
+        display: "flex",
+        alignItems: "center",
+        color: "var(--uxp-host-text-color)",
+        fontSize: "20px",
+    },
+    productLogo: { height: "28px", marginRight: "0.2rem" },
     resetButton: { padding: 0 },
     industryTypePicker: { width: "100%" },
+    industryTypeLabel: { color: "var(--uxp-host-text-color)" },
 };
 
 export const RemoveBackground = ({
@@ -127,6 +134,10 @@ export const RemoveBackground = ({
             })
         );
 
+        updateUsage();
+        setFilters(filters);
+        setLoading(false);
+
         if (error) {
             const errorAlertDialogController = new CommandController(
                 ({ dialog }) => (
@@ -140,10 +151,6 @@ export const RemoveBackground = ({
 
             await errorAlertDialogController.run();
         }
-
-        updateUsage();
-        setFilters(filters);
-        setLoading(false);
     };
 
     const handleIndustryTypeChange = (e) => setIndustryType(e.target.value);
@@ -169,11 +176,12 @@ export const RemoveBackground = ({
                 </div>
             )}
             <header style={styles.header}>
-                <a href={constants.urls.pluginHomePage}>
-                    <img
-                        style={styles.productImage}
-                        src={constants.urls.pluginFullImage}
-                    />
+                <a
+                    href={constants.urls.pluginHomePage}
+                    style={styles.productFullLogo}
+                >
+                    <img style={styles.productLogo} src="./icons/erasebg.png" />
+                    Erase.bg
                 </a>
                 <a href={constants.urls.pluginDoc} style={styles.helpLink}>
                     <span style={styles.helpIcon}>
@@ -182,10 +190,14 @@ export const RemoveBackground = ({
                     How it works?
                 </a>
             </header>
-            <main id="erasebg-form" style={styles.form}>
+            <main style={styles.form}>
                 <WC onChange={handleIndustryTypeChange} style={styles.paramGap}>
                     <div style={styles.paramSection}>
-                        <sp-label for="industry-type" size="m">
+                        <sp-label
+                            for="industry-type"
+                            size="m"
+                            style={styles.industryTypeLabel}
+                        >
                             Industry type
                         </sp-label>
                         <sp-action-button

@@ -8,8 +8,7 @@ export const constants = {
 
         pluginHomePage: "https://www.erase.bg",
         pluginDoc: "https://www.pixelbin.io/docs/tools/photoshop/erasebg",
-        pluginFullImage: "https://cdn.pixelbin.io/v2/dummy-cloudname/original/common_assets/logos/erasebg-logo.png",
 
         apiDomain: "https://api.pixelbin.io",
     }
-}
+};
