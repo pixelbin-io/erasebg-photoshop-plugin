@@ -82,6 +82,7 @@ export function Login({ setToken, setAppOrgDetails }) {
                     <sp-textfield
                         name="token"
                         placeholder="Enter API Token"
+                        type="password"
                     ></sp-textfield>
                 </WC>
                 <sp-action-button
