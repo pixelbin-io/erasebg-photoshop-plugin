@@ -83,7 +83,7 @@ const params = [
         enum: ["general", "ecommerce", "car", "human"],
         preview: ["car"],
         default: "general",
-        identifier: "i",
+        identifier: "industryType",
         title: "Industry type",
     },
     {
@@ -92,14 +92,14 @@ const params = [
         type: "boolean",
         default: false,
         preview: false,
-        identifier: "shadow",
+        identifier: "addShadow",
     },
     {
         name: "Refine",
         title: "Refine Output",
         type: "boolean",
         default: true,
-        identifier: "r",
+        identifier: "refine",
     },
 ];
 
