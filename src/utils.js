@@ -129,7 +129,7 @@ export async function fetchLazyTransformation(url, attempt = 0) {
     return response;
 }
 
-export const removeBackground = async ({ appOrgDetails, filters, token }) => {
+export const applyTransformation = async ({ appOrgDetails, parameters, token }) => {
     const config = new PixelbinConfig({
         domain: constants.urls.apiDomain,
         apiSecret: token,
@@ -156,7 +156,7 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
     await photoshop.core.executeAsModal(async (executionContext) => {
         const suspensionID = await executionContext.hostControl.suspendHistory({
             documentID: originalImageLayer._docId,
-            name: "Remove Background (Erase.bg)"
+            name: "Remove Background (Erase.bg)",
         });
 
         try {
@@ -190,7 +190,7 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
             });
 
             const { presignedUrl } = await pixelbin.assets.createSignedUrlV2({
-                path: "__photoshop",
+                path: "__photoshop/__erase.bg",
                 format: "jpeg",
                 filenameOverride: true,
             });
@@ -205,7 +205,7 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
 
             const pixelbinCore = new Pixelbin({ cloudName: appOrgDetails.org.cloudName });
             const pixelbinImage = pixelbinCore.image(fileId);
-            const transformation = transformations.EraseBG.bg(filters);
+            const transformation = transformations.EraseBG.bg(parameters);
             pixelbinImage.setTransformation(transformation);
 
             const transformationURL = pixelbinImage.getUrl();
@@ -213,7 +213,7 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
             const { data: transformedImageBuffer } = await fetchLazyTransformation(transformationURL);
 
             const transformedImageFile = await folder.createFile(
-                originalImageLayer.name + " - background removed",
+                originalImageLayer.name + " - transformed",
                 { overwrite: true }
             );
 
@@ -224,15 +224,14 @@ export const removeBackground = async ({ appOrgDetails, filters, token }) => {
             const currentDocument = photoshop.app.activeDocument;
             const newDocument = await photoshop.app.open(transformedImageFile);
 
-            const transformedImageLayer =
-                await newDocument.activeLayers.at(0).duplicate(currentDocument);
+            const transformedImageLayer = await newDocument.activeLayers.at(0).duplicate(currentDocument);
 
             await newDocument.close(
                 photoshop.constants.SaveOptions.DONOTSAVECHANGES
             );
 
             transformedImageLayer.name =
-                originalImageLayer.name + " - background removed";
+                originalImageLayer.name + " - transformed";
 
             await changeLayerPosition(
                 transformedImageLayer,
@@ -272,7 +271,7 @@ export const getUsage = (token) => {
     const pixelbin = new PixelbinClient(config);
 
     return pixelbin.billing.getUsage();
-}
+};
 
 export function abbreviateNumber(number) {
     if (!number) return number;

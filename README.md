@@ -3,7 +3,7 @@
 This plugin introduces support to remove the background of images in Photoshop backend by [PixelBin's](https://www.pixelbin.io) Erase.bg transformation.
 
 > [!NOTE]
-> To learn more about how to use this plugin, [click here](https://www.pixelbin.io/docs/tools/photoshop/erasebg/).
+> To learn more about how to use this plugin, [click here](https://www.pixelbin.io/docs/integrations/photoshop/erase.bg/).
 
 ## Install dependencies
 

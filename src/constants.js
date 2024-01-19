@@ -7,8 +7,8 @@ export const constants = {
         orgPricingPage: "https://console.pixelbin.io/organization/:orgId/settings/billing/pricing",
 
         pluginHomePage: "https://www.erase.bg",
-        pluginDoc: "https://www.pixelbin.io/docs/tools/photoshop/erasebg",
+        pluginDoc: "https://www.pixelbin.io/docs/integrations/photoshop/erase.bg/",
 
         apiDomain: "https://api.pixelbin.io",
-    }
+    },
 };

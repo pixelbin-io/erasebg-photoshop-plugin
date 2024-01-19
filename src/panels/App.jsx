@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { entrypoints } from "uxp";
 
 import { Login } from "../components/Login";
-import { RemoveBackground } from "../components/RemoveBackground";
+import { Home } from "../components/Home";
 import { storage } from "../utils";
 
 export const App = ({ panel }) => {
@@ -36,7 +36,7 @@ export const App = ({ panel }) => {
 
     if (isUserLoggedIn) {
         return (
-            <RemoveBackground
+            <Home
                 appOrgDetails={appOrgDetails}
                 token={token}
                 filters={filters}
