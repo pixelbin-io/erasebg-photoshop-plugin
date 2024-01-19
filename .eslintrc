@@ -9,6 +9,11 @@
         "plugin:react/recommended",
         "plugin:react-hooks/recommended"
     ],
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
     "parserOptions": {
         "ecmaVersion": 12,
         "sourceType": "module",
